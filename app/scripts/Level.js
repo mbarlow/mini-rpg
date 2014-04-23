@@ -1,3 +1,18 @@
+var Terrain = {};
+
+Terrain.allocateHeightMap = function(width, depth) {
+  var ArrayClass = window.Float64Array || window.Array;
+  var heightmap = new Array(width);
+  for(var x = 0; x < width; x++) {
+    heightMap[x] = new ArrayClass(depth);
+  }
+  return heightMap;
+};
+
+Terrain.simplexHeightmap = function(heightmap) {
+};
+
+
 function Level() {
     this.resolution = 20;
 }
