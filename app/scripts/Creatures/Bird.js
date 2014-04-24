@@ -1,15 +1,16 @@
 var birdModel = (function(){ 
-    var geometry = new THREE.BoxGeometry(2, 2, 5);
+    var geometry = new THREE.BoxGeometry(1, 1, 2.5);
     var material = new THREE.MeshLambertMaterial({ color: 0xff6666, shading: THREE.SmoothShading, vertexColors: THREE.FaceColors });
     var mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
+    mesh.scale.set(0.25,0.25,0.25)
   return mesh; 
 })();
 
 function Bird(game) {
     this.name = 'bird';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(1100), 30 + roll(50), rndInt(1100));
+    this.pos = new THREE.Vector3(rndInt(128), 1 + roll(2), rndInt(128));
     this.destination = this.pos.clone();
     this.health = 5;
     this.speed = 50 + rndInt(40);
@@ -49,7 +50,7 @@ Bird.states = {
 
     },
     canExplore: function() {
-        return Math.random() > 0.99;
+        return Math.random() > 0.99 && this.health > 0;
     },
     sleep: function() {}
 };

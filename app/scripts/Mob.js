@@ -1,10 +1,10 @@
 function Mob(game) {
     this.name = 'mob';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(1100), 100, rndInt(1100));
+    this.pos = new THREE.Vector3(rndInt(128), 0, rndInt(128));
     this.destination = this.pos.clone();
     this.target = null;
-    this.speed = 40;
+    this.speed = 10;
     this.log = false;
     this.fps = false;
     this.state = this.game.machine.generate(mobJson, this, Mob.states);
@@ -19,8 +19,7 @@ Mob.prototype.constructor = Mob;
 
 
 Mob.prototype.update = function () {
-    var collision = this.game.place(this.pos);
-    this.pos.y = collision.y + 1.5;
+    this.game.place(this.pos);
     this.shootCooldown--;
 
     this.state = this.state.tick();
@@ -38,14 +37,15 @@ Mob.prototype.update = function () {
 
 
 Mob.prototype.create = function () {
-    var geometry = new THREE.BoxGeometry(5, 10, 5);
+    var geometry = new THREE.BoxGeometry(1, 2, 1);
     var material = new THREE.MeshLambertMaterial({ color: 0xecc2a7, shading: THREE.SmoothShading });
     this.mesh = new THREE.Mesh(geometry, material);
     for (var i = 0; i < this.mesh.geometry.vertices.length; i++) {
-        this.mesh.geometry.vertices[i].y += 5;
+        this.mesh.geometry.vertices[i].y += 1.5;
     }
     this.mesh.castShadow = true;
     this.mesh.name = this.name;
+    this.mesh.scale.set(0.25,0.25,0.25);
 };
 
 
@@ -155,9 +155,9 @@ var mobJson = {
 
 
 Mob.states = {
-    idle: function() { console.log('idle'); },
-    explore: function() { console.log('exploring')},
-    hunt: function() { console.log('hunting');},
+    idle: function() { },
+    explore: function() { },
+    hunt: function() { },
     getRandomDestination: function() {
         this.goRandom();
     },
@@ -195,7 +195,7 @@ Mob.states = {
     },
     deliverKill: function() {
         this.carry(this.prey);
-        this.destination = this.game.getCloseEntity("village", this.pos, 2000).pos.clone();
+        this.destination = this.game.getCloseEntity("village", this.pos, 256).pos.clone();
     },
     canDeliverKill: function() {
         return this.hasPrey() && this.prey.pos.distanceTo(this.pos) < 50 && this.prey.health <= 0;

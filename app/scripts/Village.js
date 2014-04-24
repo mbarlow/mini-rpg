@@ -17,11 +17,11 @@ Village.prototype.constructor = Village;
 
 Village.prototype.create = function() {
     if (objects['village']) {
-        objects['village'].scale.set(15, 15, 15);
+        objects['village'].scale.set(1, 1, 1);
         objects['village'].castShadow = true;
         this.mesh = objects['village'].clone();
         for (var i = 0; i < this.mesh.geometry.vertices.length; i++) {
-            this.mesh.geometry.vertices[i].y += 1.25;
+            this.mesh.geometry.vertices[i].y += 3;
         }
     }
 };

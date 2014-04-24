@@ -1,8 +1,8 @@
 var treeModel = (function(){
     var treeData = {
         geom: {
-            leaves: new THREE.CylinderGeometry( 0, 25, 60, 4, 1 ),
-            trunk: new THREE.BoxGeometry(5, 20, 5)
+            leaves: new THREE.CylinderGeometry( 0, 5, 12, 4, 1 ),
+            trunk: new THREE.BoxGeometry(1, 4, 1)
         },
         materials: {
             leaves: new THREE.MeshLambertMaterial({ color: 0x3EA055, shading: THREE.SmoothShading }),
@@ -18,12 +18,13 @@ var treeModel = (function(){
     leaves.castShadow = true;
     trunk.castShadow = true;
 
-    leaves.position.y += 50;
-    trunk.position.y += 20;
+    leaves.position.y += 8;
+
 
     tree.add(leaves);
     tree.add(trunk);
     tree.castShadow = true;
+    tree.scale.set(0.25,0.25,0.25);
 
     return tree;
 })();

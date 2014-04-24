@@ -8,8 +8,8 @@ function GameEngine() {
     this.delta = 0;
     this.elapsed = 0;
     this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-    this.camera.position.y = 500;
-    this.camera.position.z = 500;
+    this.camera.position.y = 50;
+    this.camera.position.z = 100;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     this.cameraFPS = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 5000 );
     this.scene = new THREE.Scene();
@@ -161,28 +161,17 @@ GameEngine.prototype.getEntity = function (id) {
 
 GameEngine.prototype.plantTrees = function() {
     for (var i = 0; i < TREES; i++) {
-        var rndPoint = new THREE.Vector3(rndInt(1100), 100, rndInt(1100));
-        var collision = this.place(rndPoint);
-        if (collision.y > 0) {
-            collision.y -= 10;
-            this.addEntity(new Tree(MiniRPG, {pos: collision}));
+        var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+        this.place(rndPoint);
+        if (rndPoint.y > 0) {
+            this.addEntity(new Tree(MiniRPG, {pos: rndPoint}));
         }
     }
 };
 
 
 GameEngine.prototype.place = function(position) {
-    var caster = new THREE.Raycaster();
-    var ray = new THREE.Vector3(0, -1, 0);
-
-    caster.set(position, ray);
-
-    var collisions = caster.intersectObject(MiniRPG.scene.getObjectByName('terrain').children[0]);
-
-    if (collisions.length > 0) {
-        return collisions[0].point ;
-    }
-    return position;
+    position.y = Terrain.planeToHeightMapCoords(heightMap, MiniRPG.scene.getObjectByName('terrain').children[0], position.x, position.z)
 };
 
 
