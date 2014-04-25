@@ -1,7 +1,7 @@
 var MiniRPG = new GameEngine();
 var loader = new THREE.JSONLoader();
 var objects   = {};
-var heightMap = Terrain.allocateHeightMap(128,128);
+var heightMap = Terrain.allocateHeightMap(96,96);
 
 var TREES = 250;
 var BIRDS = 10;
