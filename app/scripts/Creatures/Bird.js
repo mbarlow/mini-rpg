@@ -45,7 +45,7 @@ Bird.prototype.attacked = function() {
 Bird.states = {
     idle: function() {console.log('idle')},
     getRandomDestination: function() {
-        var rndPoint = new THREE.Vector3(rndInt(1100), 30 + roll(50), rndInt(1100));
+        var rndPoint = new THREE.Vector3(rndInt(200), 30 + roll(25), rndInt(200));
         this.destination = rndPoint;
 
     },

@@ -1,21 +1,22 @@
 var rabbitModel = (function(){
-    var geometry = new THREE.BoxGeometry(2, 2, 5);
+    var geometry = new THREE.BoxGeometry(1, 1, 2.5);
     var material = new THREE.MeshLambertMaterial({ color: 0x777777, shading: THREE.SmoothShading, vertexColors: THREE.FaceColors });
     var mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
     for (var i = 0; i < mesh.geometry.vertices.length; i++) {
-        mesh.geometry.vertices[i].y += 5;
+        mesh.geometry.vertices[i].y += 1;
     }
+    mesh.scale.set(0.25,0.25,0.25)
     return mesh;
 })();
 
 function Rabbit(game) {
     this.name = 'rabbit';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(1200), 0, rndInt(1200));
+    this.pos = new THREE.Vector3(rndInt(200), 0, rndInt(200));
     this.destination = this.pos.clone();
     this.health = 5;
-    this.speed = 50 + rndInt(40);
+    this.speed = 10 + rndInt(10);
     this.state = this.game.machine.generate(rabbitJson, this, Rabbit.states);
 }
 
@@ -25,8 +26,7 @@ Rabbit.prototype.constructor = Rabbit;
 
 
 Rabbit.prototype.update = function() {
-    var collision = this.game.place(this.pos);
-    this.pos.y = collision.y + 5;
+    this.game.place(this.pos);
     this.state = this.state.tick();
     Entity.prototype.update.call(this);
 };
@@ -50,10 +50,10 @@ Rabbit.prototype.attacked = function() {
 Rabbit.states = {
     idle: function() {console.log('idle')},
     getRandomDestination: function() {
-        var rndPoint = new THREE.Vector3(rndInt(1100), 10, rndInt(1100));
-        var collision = this.game.place(rndPoint);
-        if (collision.y > 5) {
-            this.destination = collision;
+        var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+        this.game.place(rndPoint);
+        if (rndPoint.y > 5) {
+            this.destination = rndPoint;
         }
     },
     canExplore: function() {

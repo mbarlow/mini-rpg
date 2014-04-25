@@ -71,6 +71,13 @@ GameEngine.prototype.update = function() {
         }
     }
     this.controls.update();
+    if (this.trackingEntity) {
+        this.cameraFPS.position = this.trackingEntity.pos.clone();
+        this.cameraFPS.position.y += 1.5;
+        this.cameraFPS.position.x -= 2;
+        this.cameraFPS.position.z -= 2;
+        this.cameraFPS.lookAt(this.trackingEntity.pos);
+    }
 };
 
 
@@ -114,7 +121,7 @@ GameEngine.prototype.start = function() {
 
 GameEngine.prototype.initLighting = function () {
     var d = 500;
-//    var ambient = new THREE.AmbientLight(0x111111);
+    var ambient = new THREE.AmbientLight(0x111111);
     var dirLight = new THREE.DirectionalLight(0xffffcc, 0.5, 500);
     var hemiLight = new THREE.HemisphereLight(0xffffcc, 0xffffcc, 0.6);
     var pointLight = new THREE.PointLight(0xffffcc);
@@ -137,10 +144,10 @@ GameEngine.prototype.initLighting = function () {
 
     hemiLight.color.setHSL(0.6, 1, 0.6);
     hemiLight.groundColor.setHSL(0.095, 1, 0.75);
-    hemiLight.position.set(0, 500, 0);
+    hemiLight.position.set(0, 300, 0);
 
     pointLight.intensity = 0.75;
-    pointLight.position = new THREE.Vector3(1000, 800, -1000);
+    pointLight.position = new THREE.Vector3(100, 80, -100);
 
     this.scene.add(dirLight);
     //this.scene.add(ambient);
@@ -161,11 +168,15 @@ GameEngine.prototype.getEntity = function (id) {
 
 GameEngine.prototype.plantTrees = function() {
     for (var i = 0; i < TREES; i++) {
-        var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
-        this.place(rndPoint);
-        if (rndPoint.y > 0) {
-            this.addEntity(new Tree(MiniRPG, {pos: rndPoint}));
+        for (var t = 0; t < 500; t++) {
+            var rndPoint = new THREE.Vector3(rndInt(200), 0, rndInt(200));
+            this.place(rndPoint);
+            if (rndPoint.y > 1) {
+                break;
+            }
         }
+        this.addEntity(new Tree(MiniRPG, {pos: rndPoint}));
+
     }
 };
 
@@ -178,12 +189,12 @@ GameEngine.prototype.place = function(position) {
 GameEngine.prototype.switchCam = function() {
     if (this.fps) {
         this.fps = false;
+        this.trackingEntity = undefined;
     } else {
         var mob = this.getCloseEntity('mob', new THREE.Vector3(0, 0, 0), 2000);
         mob.fps = true;
         mob.log = true;
         this.fps = true;
-        this.cameraFPS.position = mob.pos;
-        this.cameraFPS.position.y += 10;
+        this.trackingEntity = mob;
     }
 };

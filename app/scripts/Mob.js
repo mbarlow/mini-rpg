@@ -1,16 +1,16 @@
 function Mob(game) {
     this.name = 'mob';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+    this.pos = this.game.getCloseEntity("village", this.pos, 1500).pos.clone();
     this.destination = this.pos.clone();
     this.target = null;
-    this.speed = 10;
+    this.speed = 5;
     this.log = false;
     this.fps = false;
     this.state = this.game.machine.generate(mobJson, this, Mob.states);
     this.carryEntity = undefined;
-    this.shootCooldown = 5;
-    this.vision = 50;
+    this.shootCooldown = 10;
+    this.vision = 10;
 }
 
 
@@ -43,9 +43,10 @@ Mob.prototype.create = function () {
     for (var i = 0; i < this.mesh.geometry.vertices.length; i++) {
         this.mesh.geometry.vertices[i].y += 1.5;
     }
-    this.mesh.castShadow = true;
+
     this.mesh.name = this.name;
     this.mesh.scale.set(0.25,0.25,0.25);
+    this.mesh.castShadow = true;
 };
 
 
@@ -89,16 +90,17 @@ Mob.prototype.shoot = function(destination) {
                 }
             )
         );
-        this.shootCooldown = 5;
+        this.shootCooldown = 10;
     }
 };
 
 
 Mob.prototype.getPrey = function() {
-    var rabbit = this.game.getCloseEntity("rabbit", this.pos, 1100);
-    var bird = this.game.getCloseEntity("bird", this.pos, 1100);
-    var prey = [rabbit, bird];
-    this.prey = prey[roll(2)];
+    var rabbit = this.game.getCloseEntity("rabbit", this.pos, this.vision);
+    //var bird = this.game.getCloseEntity("bird", this.pos, this.vision);
+    //var prey = [rabbit, bird];
+    //this.prey = prey[roll(2)];
+    this.prey = rabbit;
 };
 
 
@@ -116,10 +118,10 @@ Mob.prototype.track = function() {
 
 
 Mob.prototype.goRandom = function() {
-    var rndPoint = new THREE.Vector3(rndInt(1100), 10, rndInt(1100));
-    var collision = this.game.place(rndPoint);
-    if (collision.y > 5) {
-        this.destination = collision;
+    var rndPoint = new THREE.Vector3(rndInt(200), 0, rndInt(200));
+    this.game.place(rndPoint);
+    if (rndPoint.y > 5) {
+        this.destination = rndPoint;
     }
 };
 
@@ -137,17 +139,17 @@ var mobJson = {
     children: [
         { id: "explore", strategy: "sequential",
             children: [
-                //{ id: "getRandomDestination" },
-                { id: "hunt", strategy: "sequential",
-                    children: [
-                        { id: "getPrey" },
-                        { id: "track"},
-                        { id: "attack" },
-                        { id: "getKill" },
-                        { id: "deliverKill" },
-                        { id: "dropKill"}
-                    ]
-                }
+                { id: "getRandomDestination" },
+//                { id: "hunt", strategy: "sequential",
+//                    children: [
+//                        { id: "getPrey" },
+//                        { id: "track"},
+//                        { id: "attack" },
+//                        { id: "getKill" },
+//                        { id: "deliverKill" },
+//                        { id: "dropKill"}
+//                    ]
+//                }
             ]
         }
     ]
@@ -162,7 +164,7 @@ Mob.states = {
         this.goRandom();
     },
     canExplore: function() {
-        return Math.random() > 0.99;
+        return Math.random() > 0.95;
     },
     canHunt: function() {
         return !this.carryEntity;

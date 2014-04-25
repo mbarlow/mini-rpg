@@ -3,11 +3,11 @@ var loader = new THREE.JSONLoader();
 var objects   = {};
 var heightMap = Terrain.allocateHeightMap(128,128);
 
-var TREES = 500;
+var TREES = 250;
 var BIRDS = 10;
-var RABBITS = 0;
+var RABBITS = 10;
 var CLOUDS = 15;
-var MOBS = 1;
+var MOBS = 10;
 
 
 window.onload = function () {
@@ -17,18 +17,30 @@ window.onload = function () {
         MiniRPG.start();
         MiniRPG.plantTrees();
 
-        for (var i = 0; i < MOBS; i++) {
-            MiniRPG.addEntity(new Mob(MiniRPG));
-        }
+
 
         for (var i = 0; i < 1; i++) {
-            var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
-            MiniRPG.place(rndPoint);
+            for (var t = 0; t < 500; t++) {
+                var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+                MiniRPG.place(rndPoint);
+                if (rndPoint.y > 1) {
+                    break;
+                }
+            }
             MiniRPG.addEntity(new Mine(MiniRPG, {pos: rndPoint}));
 
-            var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
-            MiniRPG.place(rndPoint);
+            for (var t = 0; t < 500; t++) {
+                var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+                MiniRPG.place(rndPoint);
+                if (rndPoint.y > 1) {
+                    break;
+                }
+            }
             MiniRPG.addEntity(new Village(MiniRPG, {pos: rndPoint}));
+        }
+
+        for (var i = 0; i < MOBS; i++) {
+            MiniRPG.addEntity(new Mob(MiniRPG));
         }
     });
 };
