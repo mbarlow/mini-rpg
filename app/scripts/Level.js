@@ -172,17 +172,21 @@ Terrain.heightToColor = (function () {
     var color = new THREE.Color();
     return function (height) {
         // compute color based on height
-        if (height < 0.5) { //water
+        if (height < 0.45) { //water
             height = (height * 2) * 0.5 + 0.2;
-            color.setRGB(height/2.5, height/2.5, height/2)
-        } else if (height < 0.7) { //grass
+            color.setRGB(height / 2.5, height / 2.5, height / 2);
+        } else if (height < 0.525) { //beach
+            color.setHex(0xEED6AF);
+        } else if (height < 0.675) { //grass
             height = (height - 0.5) / 0.2;
             height = height * 0.5 + 0.2;
-            color.setRGB(height/2, height, height/2)
+            //color.setRGB(height/2, height, height/2)
+            color.setHex(0x33aa33);
         } else { // mountains
             height = (height - 0.7) / 0.3;
             height = height * 0.5 + 0.5;
-            color.setRGB(height, height, height)
+            //color.setRGB(height, height, height);
+            color.setHex(0x777777);
         }
         return color;
     }
@@ -311,13 +315,13 @@ Level.prototype.generate = function () {
 
     var water_material = new THREE.MeshLambertMaterial({color: 0x6699ff, transparent: true, opacity: 0.75, vertexColors: THREE.FaceColors, shading: THREE.FlatShading});
     var water_geometry = new THREE.PlaneGeometry(200, 200, this.resolution, this.resolution);
-//    water_geometry.dynamic = true;
-//    water_geometry.verticesNeedUpdate = true;
-//    for (var i = 0; i < water_geometry.faces.length; i++) {
-//        var color = water_geometry.faces[i].color;
-//        var rand = Math.random();
-//        water_geometry.faces[i].color.setRGB(color.r + rand, color.g + rand, color.b + rand);
-//    }
+    water_geometry.dynamic = true;
+    water_geometry.verticesNeedUpdate = true;
+    for (var i = 0; i < water_geometry.faces.length; i++) {
+        var color = water_geometry.faces[i].color;
+        var rand = Math.random();
+        water_geometry.faces[i].color.setRGB(color.r + rand, color.g + rand, color.b + rand);
+    }
 
     var water = new THREE.Mesh(water_geometry, water_material);
     water.receiveShadow = true;

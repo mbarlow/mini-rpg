@@ -5,8 +5,8 @@ var treeModel = (function(){
             trunk: new THREE.BoxGeometry(1, 4, 1)
         },
         materials: {
-            leaves: new THREE.MeshLambertMaterial({ color: 0x3EA055, shading: THREE.SmoothShading }),
-            trunk: new THREE.MeshLambertMaterial({ color: 0x966F33, shading: THREE.SmoothShading })
+            leaves: new THREE.MeshLambertMaterial({ color: 0x3EA055, shading: THREE.FlatShading }),
+            trunk: new THREE.MeshLambertMaterial({ color: 0x966F33, shading: THREE.FlatShading })
         }
     };
     var tree = new THREE.Object3D();
@@ -17,6 +17,8 @@ var treeModel = (function(){
 
     leaves.castShadow = true;
     trunk.castShadow = true;
+    leaves.receiveShadow = true;
+    trunk.receiveShadow = true;
 
     leaves.position.y += 8;
 
