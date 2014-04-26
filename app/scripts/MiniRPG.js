@@ -17,8 +17,6 @@ window.onload = function () {
         MiniRPG.start();
         MiniRPG.plantTrees();
 
-
-
         for (var i = 0; i < 1; i++) {
             for (var t = 0; t < 500; t++) {
                 var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
