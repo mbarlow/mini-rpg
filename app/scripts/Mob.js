@@ -1,16 +1,16 @@
 function Mob(game) {
     this.name = 'mob';
+    this.vision = 30;
     Entity.call(this, game);
-    this.pos = this.game.getCloseEntity("village", this.pos, 1500).pos.clone();
+    this.pos = this.game.getCloseEntity("village", this.pos, MAX).pos.clone();
     this.destination = this.pos.clone();
     this.target = null;
-    this.speed = 5;
+    this.speed = 150;
     this.log = false;
     this.fps = false;
     this.state = this.game.machine.generate(mobJson, this, Mob.states);
     this.carryEntity = undefined;
     this.shootCooldown = 10;
-    this.vision = 10;
 }
 
 
@@ -37,16 +37,21 @@ Mob.prototype.update = function () {
 
 
 Mob.prototype.create = function () {
+    var mob = new THREE.Object3D();
     var geometry = new THREE.BoxGeometry(1, 2, 1);
     var material = new THREE.MeshLambertMaterial({ color: 0xecc2a7, shading: THREE.SmoothShading });
-    this.mesh = new THREE.Mesh(geometry, material);
-    for (var i = 0; i < this.mesh.geometry.vertices.length; i++) {
-        this.mesh.geometry.vertices[i].y += 1.5;
+    var body = new THREE.Mesh(geometry, material);
+    for (var i = 0; i < body.geometry.vertices.length; i++) {
+        body.geometry.vertices[i].y += 1.5;
     }
-
+    body.castShadow = true;
+    var circleGeometry = new THREE.CircleGeometry(this.vision, 6);
+    var circle = new THREE.Mesh(circleGeometry, new THREE.MeshBasicMaterial({color: 0xff0000, transparent: true, wireframe: true, opacity: 0.75}));
+    circle.rotateX(-Math.PI / 2);
+    mob.add(body);
+    mob.add(circle);
+    this.mesh = mob;
     this.mesh.name = this.name;
-    this.mesh.scale.set(0.25,0.25,0.25);
-    this.mesh.castShadow = true;
 };
 
 
@@ -65,6 +70,7 @@ Mob.prototype.carry = function ( entity ) {
 
 
 Mob.prototype.drop = function () {
+    console.log('drop')
     if (this.carryEntity) {
         this.carryEntity.pos = new THREE.Vector3(this.pos.x, 0, this.pos.z);
         this.carryEntity = undefined;
@@ -96,7 +102,7 @@ Mob.prototype.shoot = function(destination) {
 
 
 Mob.prototype.getPrey = function() {
-    var rabbit = this.game.getCloseEntity("rabbit", this.pos, this.vision);
+    var rabbit = this.game.getCloseEntity("rabbit", this.pos, MAX/3);
     //var bird = this.game.getCloseEntity("bird", this.pos, this.vision);
     //var prey = [rabbit, bird];
     //this.prey = prey[roll(2)];
@@ -118,11 +124,13 @@ Mob.prototype.track = function() {
 
 
 Mob.prototype.goRandom = function() {
-    var rndPoint = new THREE.Vector3(rndInt(200), 0, rndInt(200));
+    var rndPoint = new THREE.Vector3(rndInt(MAX), 0, rndInt(MAX));
     this.game.place(rndPoint);
     if (rndPoint.y > 5) {
         this.destination = rndPoint;
     }
+
+
 };
 
 
@@ -133,21 +141,34 @@ Mob.prototype.attack = function() {
     }
 };
 
+Mob.prototype.goMine = function() {
+    var mine = this.game.getCloseEntity("mine", this.pos, this.vision);
+    this.destination = mine.pos.clone();
+};
+
 
 var mobJson = {
     id: "idle", strategy: "prioritised",
     children: [
         { id: "explore", strategy: "sequential",
             children: [
-                { id: "getRandomDestination" },
-//                { id: "hunt", strategy: "sequential",
+                //{ id: "getRandomDestination" },
+                { id: "hunt", strategy: "sequential",
+                    children: [
+                        { id: "getPrey" },
+                        { id: "trackPrey"},
+                        { id: "attack" },
+                        { id: "getKill" },
+                        { id: "deliverKill" },
+                        { id: "dropKill"}
+                    ]
+                }
+//                { id: "mine", strategy: "sequential",
 //                    children: [
-//                        { id: "getPrey" },
-//                        { id: "track"},
-//                        { id: "attack" },
-//                        { id: "getKill" },
-//                        { id: "deliverKill" },
-//                        { id: "dropKill"}
+//                        { id: "goToMine" },
+//                        { id: "mine"},
+//                        { id: "deliverResource" },
+//                        { id: "dropResource"}
 //                    ]
 //                }
             ]
@@ -160,13 +181,20 @@ Mob.states = {
     idle: function() { },
     explore: function() { },
     hunt: function() { },
+    mine: function() { },
     getRandomDestination: function() {
         this.goRandom();
     },
+    canGetRandomDestination: function() {
+        return Math.random() > 0.95 && this.destination.distanceTo(this.pos) < 10;
+    },
     canExplore: function() {
-        return Math.random() > 0.95;
+        return Math.random() > 0.95 && !this.carryEntity;
     },
     canHunt: function() {
+        return !this.carryEntity;
+    },
+    canMine: function() {
         return !this.carryEntity;
     },
     getPrey: function() {
@@ -177,10 +205,10 @@ Mob.states = {
     canGetPrey: function() {
         return !this.hasPrey() && !this.carryEntity;
     },
-    track: function() {
+    trackPrey: function() {
         this.track();
     },
-    canTrack: function() {
+    canTrackPrey: function() {
         return this.hasPrey();
     },
     attack: function() {
@@ -197,7 +225,7 @@ Mob.states = {
     },
     deliverKill: function() {
         this.carry(this.prey);
-        this.destination = this.game.getCloseEntity("village", this.pos, 256).pos.clone();
+        this.destination = this.game.getCloseEntity("village", this.pos, MAX).pos.clone();
     },
     canDeliverKill: function() {
         return this.hasPrey() && this.prey.pos.distanceTo(this.pos) < 50 && this.prey.health <= 0;

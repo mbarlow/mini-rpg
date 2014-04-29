@@ -8,8 +8,9 @@ function GameEngine() {
     this.delta = 0;
     this.elapsed = 0;
     this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 5000 );
-    this.camera.position.y = 50;
-    this.camera.position.z = 100;
+    this.camera.position.y = 250;
+    this.camera.position.z = 0;
+    this.camera.position.x = 0;
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
     this.cameraFPS = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 5000 );
     this.scene = new THREE.Scene();
@@ -73,10 +74,10 @@ GameEngine.prototype.update = function() {
     this.controls.update();
     if (this.trackingEntity) {
         this.cameraFPS.position = this.trackingEntity.pos.clone();
-        this.cameraFPS.position.y += 1.5;
+        this.cameraFPS.position.y += 3.5;
         this.cameraFPS.position.x -= 2;
         this.cameraFPS.position.z -= 2;
-        this.cameraFPS.lookAt(this.trackingEntity.pos);
+        this.cameraFPS.lookAt(this.trackingEntity.destination);
     }
 };
 
@@ -147,7 +148,7 @@ GameEngine.prototype.initLighting = function () {
     hemiLight.position.set(0, 300, 0);
 
     pointLight.intensity = 0.75;
-    pointLight.position = new THREE.Vector3(100, 80, -100);
+    pointLight.position = new THREE.Vector3(100, 180, -100);
 
     this.scene.add(dirLight);
     //this.scene.add(ambient);
@@ -169,13 +170,27 @@ GameEngine.prototype.getEntity = function (id) {
 GameEngine.prototype.plantTrees = function() {
     for (var i = 0; i < TREES; i++) {
         for (var t = 0; t < 500; t++) {
-            var rndPoint = new THREE.Vector3(rndInt(200), 0, rndInt(200));
+            var rndPoint = new THREE.Vector3(rndInt(MAX), 0, rndInt(MAX));
             this.place(rndPoint);
-            if (rndPoint.y > 1) {
+            if (rndPoint.y > 10 && rndPoint.y < 60) {
                 break;
             }
         }
         this.addEntity(new Tree(MiniRPG, {pos: rndPoint}));
+
+    }
+};
+
+GameEngine.prototype.dropRocks = function() {
+    for (var i = 0; i < ROCKS; i++) {
+        for (var t = 0; t < 500; t++) {
+            var rndPoint = new THREE.Vector3(rndInt(MAX), 0, rndInt(MAX));
+            this.place(rndPoint);
+            if (rndPoint.y > 10) {
+                break;
+            }
+        }
+        this.addEntity(new Rock(MiniRPG, {pos: rndPoint}));
 
     }
 };

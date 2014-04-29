@@ -3,14 +3,13 @@ var birdModel = (function(){
     var material = new THREE.MeshLambertMaterial({ color: 0xff6666, shading: THREE.SmoothShading, vertexColors: THREE.FaceColors });
     var mesh = new THREE.Mesh(geometry, material);
     mesh.castShadow = true;
-    mesh.scale.set(0.25,0.25,0.25)
   return mesh; 
 })();
 
 function Bird(game) {
     this.name = 'bird';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(128), 1 + roll(2), rndInt(128));
+    this.pos = new THREE.Vector3(rndInt(MAX), 30 + roll(2), rndInt(MAX));
     this.destination = this.pos.clone();
     this.health = 5;
     this.speed = 50 + rndInt(40);
@@ -45,7 +44,7 @@ Bird.prototype.attacked = function() {
 Bird.states = {
     idle: function() {console.log('idle')},
     getRandomDestination: function() {
-        var rndPoint = new THREE.Vector3(rndInt(200), 30 + roll(25), rndInt(200));
+        var rndPoint = new THREE.Vector3(rndInt(MAX), 30 + roll(25), rndInt(MAX));
         this.destination = rndPoint;
 
     },

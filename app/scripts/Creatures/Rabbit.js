@@ -6,14 +6,13 @@ var rabbitModel = (function(){
     for (var i = 0; i < mesh.geometry.vertices.length; i++) {
         mesh.geometry.vertices[i].y += 1;
     }
-    mesh.scale.set(0.25,0.25,0.25)
     return mesh;
 })();
 
 function Rabbit(game) {
     this.name = 'rabbit';
     Entity.call(this, game);
-    this.pos = new THREE.Vector3(rndInt(200), 0, rndInt(200));
+    this.pos = new THREE.Vector3(rndInt(MAX), 0, rndInt(MAX));
     this.destination = this.pos.clone();
     this.health = 5;
     this.speed = 10 + rndInt(10);
@@ -50,7 +49,7 @@ Rabbit.prototype.attacked = function() {
 Rabbit.states = {
     idle: function() {console.log('idle')},
     getRandomDestination: function() {
-        var rndPoint = new THREE.Vector3(rndInt(128), 0, rndInt(128));
+        var rndPoint = new THREE.Vector3(rndInt(MAX), 0, rndInt(MAX));
         this.game.place(rndPoint);
         if (rndPoint.y > 5) {
             this.destination = rndPoint;

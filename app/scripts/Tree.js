@@ -22,11 +22,10 @@ var treeModel = (function(){
 
     leaves.position.y += 8;
 
-
     tree.add(leaves);
     tree.add(trunk);
     tree.castShadow = true;
-    tree.scale.set(0.25,0.25,0.25);
+
 
     return tree;
 })();
@@ -39,6 +38,7 @@ var treeModel = (function(){
  */
 function Tree(game, data) {
     this.name = 'tree';
+
     Entity.call(this, game);
     this.pos = data.pos;
     this.destination = this.pos.clone();
@@ -51,7 +51,7 @@ Tree.prototype.constructor = Tree;
 
 
 Tree.prototype.create = function() {
-  //var randScale = 1 + Math.random();
+  var randScale = 1 + Math.random();
   this.mesh = treeModel.clone();
-  //this.mesh.scale.set(randScale, randScale, randScale);
+  this.mesh.scale.set(randScale, randScale, randScale);
 };

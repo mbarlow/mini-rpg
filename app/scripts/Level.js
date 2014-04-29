@@ -180,12 +180,10 @@ Terrain.heightToColor = (function () {
         } else if (height < 0.675) { //grass
             height = (height - 0.5) / 0.2;
             height = height * 0.5 + 0.2;
-            //color.setRGB(height/2, height, height/2)
             color.setHex(0x33aa33);
         } else { // mountains
             height = (height - 0.7) / 0.3;
             height = height * 0.5 + 0.5;
-            //color.setRGB(height, height, height);
             color.setHex(0x777777);
         }
         return color;
@@ -193,7 +191,6 @@ Terrain.heightToColor = (function () {
 })();
 
 Terrain.heightMapToPlaneGeometry = function (heightMap) {
-    // get heightMap dimensions
     var width = heightMap.length;
     var depth = heightMap[0].length;
     // build geometry
@@ -208,19 +205,15 @@ Terrain.heightMapToPlaneGeometry = function (heightMap) {
             vertex.z = (height - 0.5) * 2;
         }
     }
-    // notify the geometry need to update vertices
     geometry.verticesNeedUpdate = true;
-    // notify the geometry need to update normals
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
     geometry.normalsNeedUpdate = true;
-    // return the just built geometry
     return geometry;
 }
 
 
 Terrain.heightMapToHeight = function (heightMap, x, z) {
-    // get heightMap dimensions
     var width = heightMap.length;
     var depth = heightMap[0].length;
     // sanity check - boundaries
@@ -248,15 +241,11 @@ Terrain.heightMapToHeight = function (heightMap, x, z) {
             + (heightSE - heightSW) * deltaX
             + (heightNW - heightSW) * (1 - deltaZ)
     }
-    // return the height
     return height
 }
 
 
 Terrain.planeToHeightMapCoords = function (heightMap, planeMesh, x, z) {
-
-    // TODO assert no rotation in planeMesh
-    // - how can i check that ? with euler ?
 
     var position = new THREE.Vector3(x, 0, z)
 
@@ -287,9 +276,7 @@ Terrain.planeToHeightMapCoords = function (heightMap, planeMesh, x, z) {
 }
 
 
-function Level() {
-    this.resolution = 40;
-}
+function Level() {}
 
 Level.prototype.constructor = Level;
 
@@ -308,13 +295,13 @@ Level.prototype.generate = function () {
     land.receiveShadow = true;
     land.name = 'land';
     land.rotateX(-Math.PI / 2);
-    land.scale.y = 20 * 10;
-    land.scale.x = 20 * 10;
+    land.scale.y = MAX / 10;
+    land.scale.x = MAX / 10;
     land.scale.z = 2 * 10;
-    //land.scale.multiplyScalar(10)
+    land.scale.multiplyScalar(10);
 
     var water_material = new THREE.MeshLambertMaterial({color: 0x6699ff, transparent: true, opacity: 0.75, vertexColors: THREE.FaceColors, shading: THREE.FlatShading});
-    var water_geometry = new THREE.PlaneGeometry(200, 200, this.resolution, this.resolution);
+    var water_geometry = new THREE.PlaneGeometry(1, 1, 48, 48);
     water_geometry.dynamic = true;
     water_geometry.verticesNeedUpdate = true;
     for (var i = 0; i < water_geometry.faces.length; i++) {
@@ -324,18 +311,17 @@ Level.prototype.generate = function () {
     }
 
     var water = new THREE.Mesh(water_geometry, water_material);
+    water.scale.y = MAX / 10;
+    water.scale.x = MAX / 10;
+    water.scale.multiplyScalar(10);
     water.receiveShadow = true;
     water.name = 'water';
     water.rotateX(-Math.PI / 2);
 
     var terrain = new THREE.Object3D();
     terrain.name = 'terrain';
-
     terrain.add(land);
     terrain.add(water);
-
-
-    //terrain.rotation.x = -Math.PI / 2;
     terrain.receiveShadow = true;
 
     return terrain;

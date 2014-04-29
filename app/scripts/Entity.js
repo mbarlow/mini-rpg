@@ -16,25 +16,27 @@ function Entity(game, color) {
 Entity.prototype.update = function () {
     var deltaX, deltaY, deltaZ;
 
-    // rotation to target location
-    deltaX = this.destination.x - this.pos.x;
-    deltaY = this.destination.y - this.pos.y;
-    deltaZ = this.destination.z - this.pos.z;
+        // rotation to target location
+        deltaX = this.destination.x - this.pos.x;
+        deltaY = this.destination.y - this.pos.y;
+        deltaZ = this.destination.z - this.pos.z;
 
-    var dv = new THREE.Vector3();
-    dv.subVectors(this.destination, this.pos);
-    dv.setLength(this.speed);
-    this.vel = dv;
-    this.rotation.y = (Math.atan2(deltaX, deltaZ));
+        var dv = new THREE.Vector3();
+        dv.subVectors(this.destination, this.pos);
+        dv.setLength(this.speed);
+        this.vel = dv;
 
-    this.pos.x += this.vel.x * this.game.delta * this.timeMult;
-    this.pos.y += this.vel.y * this.game.delta * this.timeMult;
-    this.pos.z += this.vel.z * this.game.delta * this.timeMult;
+        this.rotation.y = (Math.atan2(deltaX, deltaZ));
 
-    this.mesh.position = this.pos;
-    this.mesh.rotation.x = this.rotation.x;
-    this.mesh.rotation.y = this.rotation.y;
-    this.mesh.rotation.z = this.rotation.z;
+        this.pos.x += this.vel.x * this.game.delta * this.timeMult;
+        this.pos.y += this.vel.y * this.game.delta * this.timeMult;
+        this.pos.z += this.vel.z * this.game.delta * this.timeMult;
+
+        this.mesh.position = this.pos;
+        this.mesh.rotation.x = this.rotation.x;
+        this.mesh.rotation.y = this.rotation.y;
+        this.mesh.rotation.z = this.rotation.z;
+
 };
 
 

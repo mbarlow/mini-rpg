@@ -32,7 +32,6 @@ Arrow.prototype.create = function () {
     var geometry = new THREE.BoxGeometry(0.25, 0.25, 2.5);
     var material = new THREE.MeshLambertMaterial({ color: 0x966f33, shading: THREE.SmoothShading });
     this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.scale.set(0.25,0.25,0.25);
     this.mesh.castShadow = true;
 
 };
